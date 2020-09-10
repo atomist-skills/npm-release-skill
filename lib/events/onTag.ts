@@ -17,6 +17,7 @@
 import { EventHandler, log, repository, secret, status } from "@atomist/skill";
 import * as fs from "fs-extra";
 import { NpmReleaseConfiguration } from "../configuration";
+import { prepareNpmJSRegistryProvider } from "../npm";
 import {
 	cleanSemVer,
 	isReleaseSemVer,
@@ -31,11 +32,7 @@ export const handler: EventHandler<
 	const tag = ctx.data.Tag[0];
 	const tagName = tag?.name;
 	if (!isReleaseSemVer(tagName)) {
-		return {
-			code: 0,
-			reason: `Not a semantic version tag: ${tag}`,
-			visibility: "hidden",
-		};
+		return status.success(`Not a semantic version tag: ${tag}`).hidden();
 	}
 	const releaseVersion = cleanSemVer(tagName);
 
@@ -49,6 +46,13 @@ export const handler: EventHandler<
 			apiUrl: repo.org.provider.apiUrl,
 		}),
 	);
+	try {
+		await prepareNpmJSRegistryProvider(ctx);
+	} catch (e) {
+		const reason = `Failed to create .npmrc file for NPM registries: ${e.message}`;
+		await ctx.audit.log(reason);
+		return status.failure(reason);
+	}
 
 	const project = await ctx.project.clone(
 		repository.gitHub({
