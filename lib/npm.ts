@@ -16,7 +16,6 @@
 
 import { EventContext } from "@atomist/skill";
 import * as fs from "fs-extra";
-import * as path from "path";
 import {
 	NpmJsRegistryProviderQuery,
 	NpmJsRegistryProviderQueryVariables,
@@ -39,10 +38,7 @@ export async function prepareNpmJSRegistryProvider(
 	const npmJss = await ctx.graphql.query<
 		NpmJsRegistryProviderQuery,
 		NpmJsRegistryProviderQueryVariables
-	>({
-		root: path.join(__dirname, ".."),
-		path: "graphql/query/NpmJSRegistryProvider.graphql",
-	});
+	>("NpmJSRegistryProvider.graphql");
 
 	if (npmJss?.NpmJSRegistryProvider) {
 		const requestedNpmJss = npmJss.NpmJSRegistryProvider.filter(d =>
