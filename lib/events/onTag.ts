@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { EventHandler, log, repository, secret, status } from "@atomist/skill";
+import {
+	EventHandler,
+	log,
+	repository,
+	secret,
+	status,
+	subscription,
+} from "@atomist/skill";
 import * as fs from "fs-extra";
 import { NpmReleaseConfiguration } from "../configuration";
 import { prepareNpmJSRegistryProvider } from "../npm";
@@ -23,10 +30,9 @@ import {
 	isReleaseSemVer,
 	matchingPreReleaseSemanticVersions,
 } from "../semver";
-import { OnTagSubscription } from "../typings/types";
 
 export const handler: EventHandler<
-	OnTagSubscription,
+	subscription.types.OnTagSubscription,
 	NpmReleaseConfiguration
 > = async ctx => {
 	const tag = ctx.data.Tag[0];
