@@ -1,0 +1,17 @@
+query NpmJSRegistryProvider($id: ID) {
+  NpmJSRegistryProvider(id: $id) {
+    id
+    name
+    scope
+    url
+    credential {
+      ... on Password {
+        secret
+      }
+      owner {
+        login
+      }
+      id
+    }
+  }
+}
