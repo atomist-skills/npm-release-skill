@@ -11,6 +11,8 @@
     "lib": ["DOM"],
     "strict": false,
     "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "experimentalDecorators": true,
