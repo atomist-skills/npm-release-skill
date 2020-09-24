@@ -33,34 +33,34 @@ export async function prepareNpmRegistryProvider(
 	if (!configProviders) {
 		return "";
 	}
+	console.log("configProviders=" + JSON.stringify(configProviders));
 	const configuredNpmRegistryProviderIds = Object.keys(configProviders)
-		.filter(rp => configProviders[rp].typeName === "NpmJSRegistryProvider")
+		.filter(rp => configProviders[rp].typeName === "NpmRegistryProvider")
 		.map(rp => configProviders[rp].selectedResourceProviders)
 		.map(registries => registries.map(registry => registry.id))
 		.reduce((acc, cur) => acc.concat(cur), []) // flatten
 		.filter((value, index, self) => self.indexOf(value) === index); // unique
 
-	const npmJss = await ctx.graphql.query<
+	const npmRegistries = await ctx.graphql.query<
 		NpmRegistryProviderQuery,
 		NpmRegistryProviderQueryVariables
 	>("NpmRegistryProvider.graphql");
 
 	let npmrcContent = "";
-	if (npmJss?.NpmJSRegistryProvider) {
-		const requestedNpmJss = npmJss.NpmJSRegistryProvider.filter(d =>
-			configuredNpmRegistryProviderIds.includes(d.id),
+	if (npmRegistries?.NpmRegistryProvider) {
+		const requestedNpmRegistries = npmRegistries.NpmRegistryProvider.filter(
+			d => configuredNpmRegistryProviderIds.includes(d.id),
 		);
 
-		for (const npmJs of requestedNpmJss) {
-			if (npmJs.scope) {
-				const scope = npmJs.scope.startsWith("@")
-					? npmJs.scope
-					: `@${npmJs.scope}`;
-				npmrcContent += `${scope}:registry=${npmJs.url}\n`;
+		for (const npmRegistry of requestedNpmRegistries) {
+			const scope = npmRegistry.scope || npmRegistry.name;
+			if (scope) {
+				const scoped = scope.startsWith("@") ? scope : `@${scope}`;
+				npmrcContent += `${scoped}:registry=${npmRegistry.url}\n`;
 			}
-			const token = (npmJs.credential as any).secret;
+			const token = (npmRegistry.credential as any).secret;
 			if (token) {
-				const host = extractHostFromUrl(npmJs.url);
+				const host = extractHostFromUrl(npmRegistry.url);
 				npmrcContent += `//${host}/:_authToken=${token}\n`;
 			}
 		}

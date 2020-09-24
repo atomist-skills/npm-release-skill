@@ -1,17 +1,39 @@
-query NpmRegistryProvider($id: ID) {
-  NpmJSRegistryProvider(id: $id) {
-    id
-    name
+query NpmRegistryProvider {
+  NpmRegistryProvider {
+    __typename
     scope
     url
-    credential {
-      ... on Password {
-        secret
-      }
-      owner {
-        login
-      }
+    ... on NpmJSRegistryProvider {
+      _typenames
       id
+      name
+      credential {
+        ... on Password {
+          secret
+        }
+        owner {
+          login
+        }
+        id
+      }
+    }
+    ... on GitHubNpmRegistryProvider {
+      _typenames
+      id
+      name
+      credential {
+        ... on OAuthToken {
+          owner {
+            name
+          }
+          scopes
+          secret
+        }
+      }
+      gitHubAppInstallation {
+        id
+        owner
+      }
     }
   }
 }
