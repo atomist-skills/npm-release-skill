@@ -56,7 +56,7 @@ export const handler: EventHandler<
 	try {
 		npmrcCreds = await prepareNpmRegistryProvider(ctx);
 	} catch (e) {
-		const reason = `Failed to create .npmrc file for NPM registries: ${e.message}`;
+		const reason = `Failed to generate .npmrc content for NPM registries: ${e.message}`;
 		await ctx.audit.log(reason);
 		return status.failure(reason);
 	}
@@ -141,9 +141,7 @@ export const handler: EventHandler<
 		await project.exec(
 			"npm",
 			["version", "--no-git-tag-version", releaseVersion],
-			{
-				cwd: project.path("package"),
-			},
+			{ cwd: project.path("package") },
 		);
 	} catch (e) {
 		const reason = `Failed to undate version of package to ${pkgName}@${releaseVersion}: ${e.message}`;
