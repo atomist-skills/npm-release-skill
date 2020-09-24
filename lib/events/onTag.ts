@@ -24,7 +24,7 @@ import {
 } from "@atomist/skill";
 import * as fs from "fs-extra";
 import { NpmReleaseConfiguration } from "../configuration";
-import { prepareNpmJSRegistryProvider } from "../npm";
+import { prepareNpmRegistryProvider } from "../npm";
 import {
 	cleanSemVer,
 	isReleaseSemVer,
@@ -53,7 +53,7 @@ export const handler: EventHandler<
 		}),
 	);
 	try {
-		await prepareNpmJSRegistryProvider(ctx);
+		await prepareNpmRegistryProvider(ctx);
 	} catch (e) {
 		const reason = `Failed to create .npmrc file for NPM registries: ${e.message}`;
 		await ctx.audit.log(reason);

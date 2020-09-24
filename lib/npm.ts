@@ -17,11 +17,17 @@
 import { EventContext } from "@atomist/skill";
 import * as fs from "fs-extra";
 import {
-	NpmJsRegistryProviderQuery,
-	NpmJsRegistryProviderQueryVariables,
+	NpmRegistryProviderQuery,
+	NpmRegistryProviderQueryVariables,
 } from "./typings/types";
 
-export async function prepareNpmJSRegistryProvider(
+/**
+ * Extract the NpmRegistryProvider providers from the provided
+ * configuration, query the graph for their scopes and credentials,
+ * and then write an `.npmrc` file in the current directory that
+ * contains the credentials and scopes.
+ */
+export async function prepareNpmRegistryProvider(
 	ctx: EventContext,
 ): Promise<void> {
 	const configProviders = ctx.configuration?.[0]?.resourceProviders;
@@ -36,9 +42,9 @@ export async function prepareNpmJSRegistryProvider(
 		.filter((value, index, self) => self.indexOf(value) === index); // unique
 
 	const npmJss = await ctx.graphql.query<
-		NpmJsRegistryProviderQuery,
-		NpmJsRegistryProviderQueryVariables
-	>("NpmJSRegistryProvider.graphql");
+		NpmRegistryProviderQuery,
+		NpmRegistryProviderQueryVariables
+	>("NpmRegistryProvider.graphql");
 
 	if (npmJss?.NpmJSRegistryProvider) {
 		const requestedNpmJss = npmJss.NpmJSRegistryProvider.filter(d =>

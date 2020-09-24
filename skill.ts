@@ -29,7 +29,7 @@ export const Skill = skill<NpmReleaseConfiguration & { repos: any }>({
 
 	resourceProviders: {
 		github: resourceProvider.gitHub({ minRequired: 1 }),
-		npm: resourceProvider.npmJSRegistry({ minRequired: 1 }),
+		npm: resourceProvider.npmRegistry({ minRequired: 1 }),
 	},
 
 	parameters: {

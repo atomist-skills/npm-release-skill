@@ -1,4 +1,4 @@
-query NpmJSRegistryProvider($id: ID) {
+query NpmRegistryProvider($id: ID) {
   NpmJSRegistryProvider(id: $id) {
     id
     name
