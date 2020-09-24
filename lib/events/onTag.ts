@@ -162,12 +162,11 @@ export const handler: EventHandler<
 		? "restricted"
 		: "public";
 	try {
-		await project.exec("npm", [
-			"publish",
-			"package",
-			`--access=${access}`,
-			"--tag=latest",
-		]);
+		await project.exec(
+			"npm",
+			["publish", ".", `--access=${access}`, "--tag=latest"],
+			{ cwd: project.path("package") },
+		);
 	} catch (e) {
 		const reason = `Failed to publish release version of package ${pkgName}@${releaseVersion}: ${e.message}`;
 		await ctx.audit.log(reason);
