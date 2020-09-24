@@ -52,8 +52,9 @@ export const handler: EventHandler<
 			apiUrl: repo.org.provider.apiUrl,
 		}),
 	);
+	let npmrcCreds: string | undefined;
 	try {
-		await prepareNpmRegistryProvider(ctx);
+		npmrcCreds = await prepareNpmRegistryProvider(ctx);
 	} catch (e) {
 		const reason = `Failed to create .npmrc file for NPM registries: ${e.message}`;
 		await ctx.audit.log(reason);
@@ -146,6 +147,15 @@ export const handler: EventHandler<
 		);
 	} catch (e) {
 		const reason = `Failed to undate version of package to ${pkgName}@${releaseVersion}: ${e.message}`;
+		await ctx.audit.log(reason);
+		return status.failure(reason);
+	}
+
+	const npmrcPath = project.path("package", ".npmrc");
+	try {
+		await fs.writeFile(npmrcPath, `ignore-scripts=true\n${npmrcCreds}`);
+	} catch (e) {
+		const reason = `Failed to write ${npmrcPath}: ${e.message}`;
 		await ctx.audit.log(reason);
 		return status.failure(reason);
 	}

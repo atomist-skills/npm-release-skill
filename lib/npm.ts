@@ -15,7 +15,6 @@
  */
 
 import { EventContext } from "@atomist/skill";
-import * as fs from "fs-extra";
 import {
 	NpmRegistryProviderQuery,
 	NpmRegistryProviderQueryVariables,
@@ -24,15 +23,15 @@ import {
 /**
  * Extract the NpmRegistryProvider providers from the provided
  * configuration, query the graph for their scopes and credentials,
- * and then write an `.npmrc` file in the current directory that
- * contains the credentials and scopes.
+ * and return the contents for an `.npmrc` with the credentials and
+ * scopes.
  */
 export async function prepareNpmRegistryProvider(
 	ctx: EventContext,
-): Promise<void> {
+): Promise<string> {
 	const configProviders = ctx.configuration?.[0]?.resourceProviders;
 	if (!configProviders) {
-		return;
+		return "";
 	}
 	const configuredNpmRegistryProviderIds = Object.keys(configProviders)
 		.filter(rp => configProviders[rp].typeName === "NpmJSRegistryProvider")
@@ -46,12 +45,12 @@ export async function prepareNpmRegistryProvider(
 		NpmRegistryProviderQueryVariables
 	>("NpmRegistryProvider.graphql");
 
+	let npmrcContent = "";
 	if (npmJss?.NpmJSRegistryProvider) {
 		const requestedNpmJss = npmJss.NpmJSRegistryProvider.filter(d =>
 			configuredNpmRegistryProviderIds.includes(d.id),
 		);
 
-		let npmrcContent = "";
 		for (const npmJs of requestedNpmJss) {
 			if (npmJs.scope) {
 				const scope = npmJs.scope.startsWith("@")
@@ -65,11 +64,8 @@ export async function prepareNpmRegistryProvider(
 				npmrcContent += `//${host}/:_authToken=${token}\n`;
 			}
 		}
-
-		if (npmrcContent) {
-			await fs.writeFile(".npmrc", npmrcContent);
-		}
 	}
+	return npmrcContent;
 }
 
 /** Extract host name from URL */
