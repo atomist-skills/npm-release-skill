@@ -33,7 +33,6 @@ export async function prepareNpmRegistryProvider(
 	if (!configProviders) {
 		return "";
 	}
-	console.log("configProviders=" + JSON.stringify(configProviders));
 	const configuredNpmRegistryProviderIds = Object.keys(configProviders)
 		.filter(rp => configProviders[rp].typeName === "NpmRegistryProvider")
 		.map(rp => configProviders[rp].selectedResourceProviders)
