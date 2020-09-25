@@ -52,11 +52,12 @@ export async function prepareNpmRegistryProvider(
 		);
 
 		for (const npmRegistry of requestedNpmRegistries) {
-			const scope = npmRegistry.scope || npmRegistry.name;
-			if (scope) {
-				const scoped = scope.startsWith("@") ? scope : `@${scope}`;
+			if (npmRegistry.scope) {
+				const scope = npmRegistry.scope.startsWith("@")
+					? npmRegistry.scope
+					: `@${npmRegistry.scope}`;
 				const url = ensureScheme(npmRegistry.url);
-				npmrcContent += `${scoped}:registry=${url}\n`;
+				npmrcContent += `${scope}:registry=${url}\n`;
 			}
 			const token = (npmRegistry.credential as any).secret;
 			if (token) {
