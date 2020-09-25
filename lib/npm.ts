@@ -55,7 +55,8 @@ export async function prepareNpmRegistryProvider(
 			const scope = npmRegistry.scope || npmRegistry.name;
 			if (scope) {
 				const scoped = scope.startsWith("@") ? scope : `@${scope}`;
-				npmrcContent += `${scoped}:registry=${npmRegistry.url}\n`;
+				const url = ensureScheme(npmRegistry.url);
+				npmrcContent += `${scoped}:registry=${url}\n`;
 			}
 			const token = (npmRegistry.credential as any).secret;
 			if (token) {
@@ -65,6 +66,11 @@ export async function prepareNpmRegistryProvider(
 		}
 	}
 	return npmrcContent;
+}
+
+/** Make sure URL has a scheme */
+function ensureScheme(url: string): string {
+	return /^[a-z]+:\/\//.test(url) ? url : `https://${url}`;
 }
 
 /** Extract host name from URL */
