@@ -16,7 +16,6 @@
 
 import {
 	EventHandler,
-	log,
 	repository,
 	secret,
 	status,
@@ -125,6 +124,7 @@ export const handler: EventHandler<
 		await ctx.audit.log(reason);
 		return status.failure(reason);
 	}
+	await ctx.audit.log(`Downloaded ${pkgName}@${preReleaseVersion}`);
 
 	const pkgTgz = `${pkgName}-${preReleaseVersion}.tgz`
 		.replace(/^@/, "")
@@ -148,6 +148,7 @@ export const handler: EventHandler<
 		await ctx.audit.log(reason);
 		return status.failure(reason);
 	}
+	await ctx.audit.log(`Set version to ${pkgName}@${releaseVersion}`);
 
 	const npmrcPath = project.path("package", ".npmrc");
 	try {
@@ -172,7 +173,9 @@ export const handler: EventHandler<
 		await ctx.audit.log(reason);
 		return status.failure(reason);
 	}
-	log.info(`Published ${pkgName}@${preReleaseVersion} as ${releaseVersion}`);
+	await ctx.audit.log(
+		`Published ${pkgName}@${preReleaseVersion} as ${releaseVersion}`,
+	);
 
-	return status.success(`Release ${pkgName} version ${releaseVersion}`);
+	return status.success(`Released ${pkgName} version ${releaseVersion}`);
 };
