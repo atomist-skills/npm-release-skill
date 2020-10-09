@@ -25,7 +25,7 @@ import { NpmReleaseConfiguration } from "./lib/configuration";
 
 export const Skill = skill<NpmReleaseConfiguration & { repos: any }>({
 	displayName: "npm Release",
-	categories: [Category.Deploy, Category.DevOps],
+	categories: [Category.DevOps],
 
 	resourceProviders: {
 		github: resourceProvider.gitHub({ minRequired: 1 }),
