@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@atomist/skill": "^0.1.1-atomist-npm-update-main.1",
-    "@types/fs-extra": "^9.0.1",
+    "@types/fs-extra": "^9.0.2",
     "fs-extra": "^9.0.1"
   },
   "devDependencies": {
