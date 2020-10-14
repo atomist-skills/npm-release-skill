@@ -159,7 +159,7 @@ export const handler: EventHandler<
 		return status.failure(reason);
 	}
 
-	const access = ctx.configuration?.[0]?.parameters?.restricted
+	const access = ctx.configuration?.parameters?.restricted
 		? "restricted"
 		: "public";
 	try {
