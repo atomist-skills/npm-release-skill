@@ -29,7 +29,7 @@ import {
 export async function prepareNpmRegistryProvider(
 	ctx: EventContext,
 ): Promise<string> {
-	const configProviders = ctx.configuration?.[0]?.resourceProviders;
+	const configProviders = ctx.configuration?.resourceProviders;
 	if (!configProviders) {
 		return "";
 	}
