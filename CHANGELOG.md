@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/npm-release-skill/compare/0.2.2...HEAD)
 
+### Fixed
+
+-   Fix non-semver tag status message. [dd1d12e](https://github.com/atomist-skills/npm-release-skill/commit/dd1d12e13759f0f440f83dc07e8b68cd3bae3f10)
+
 ## [0.2.2](https://github.com/atomist-skills/npm-release-skill/compare/0.2.0...0.2.2) - 2020-10-14
 
 ### Changed
