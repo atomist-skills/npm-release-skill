@@ -37,7 +37,9 @@ export const handler: EventHandler<
 	const tag = ctx.data.Tag[0];
 	const tagName = tag?.name;
 	if (!isReleaseSemVer(tagName)) {
-		return status.success(`Not a semantic version tag: ${tag}`).hidden();
+		return status
+			.success(`Not a semantic version tag: ${tag.name}`)
+			.hidden();
 	}
 	const releaseVersion = cleanSemVer(tagName);
 
