@@ -1,5 +1,6 @@
 {
   "name": "@atomist/npm-release-skill",
+  "description": "Republish an NPM package after settings its version to the provided semantic version tag",
   "author": {
     "name": "Atomist",
     "email": "oss@atomist.com"
