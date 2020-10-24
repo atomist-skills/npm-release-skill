@@ -13,4 +13,4 @@ publishes the release version package.
 
 ### Published package
 
-![Published package release](docs/images/atomist-skill-png)
+![Published package release](docs/images/atomist-skill.png)
