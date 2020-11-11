@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/npm-release-skill/compare/0.2.2...HEAD)
 
+### Removed
+
+-   Remove GitHubNpmRegistryProvider. [5b5dfd3](https://github.com/atomist-skills/npm-release-skill/commit/5b5dfd379084235adf1ad52ffeb5470819c49577)
+
 ### Fixed
 
 -   Fix non-semver tag status message. [dd1d12e](https://github.com/atomist-skills/npm-release-skill/commit/dd1d12e13759f0f440f83dc07e8b68cd3bae3f10)
