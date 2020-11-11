@@ -1,11 +1,11 @@
 query NpmRegistryProvider {
   NpmRegistryProvider {
     __typename
+    id
     scope
     url
     ... on NpmJSRegistryProvider {
       _typenames
-      id
       name
       credential {
         ... on Password {
@@ -15,24 +15,6 @@ query NpmRegistryProvider {
           login
         }
         id
-      }
-    }
-    ... on GitHubNpmRegistryProvider {
-      _typenames
-      id
-      name
-      credential {
-        ... on OAuthToken {
-          owner {
-            name
-          }
-          scopes
-          secret
-        }
-      }
-      gitHubAppInstallation {
-        id
-        owner
       }
     }
   }

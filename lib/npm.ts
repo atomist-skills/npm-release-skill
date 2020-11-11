@@ -56,25 +56,21 @@ export async function prepareNpmRegistryProvider(
 				const scope = npmRegistry.scope.startsWith("@")
 					? npmRegistry.scope
 					: `@${npmRegistry.scope}`;
-				const url = ensureScheme(npmRegistry.url);
-				npmrcContent += `${scope}:registry=${url}\n`;
+				npmrcContent += `${scope}:registry=${npmRegistry.url}\n`;
 			}
-			const token = (npmRegistry.credential as any).secret;
-			if (token) {
-				const host = extractHostFromUrl(npmRegistry.url);
-				npmrcContent += `//${host}/:_authToken=${token}\n`;
+			if (npmRegistry.__typename === "NpmJSRegistryProvider") {
+				const token = ((npmRegistry as any)?.credential as any)?.secret;
+				if (token) {
+					const hostPath = removeScheme(npmRegistry.url);
+					npmrcContent += `${hostPath}:_authToken=${token}\n`;
+				}
 			}
 		}
 	}
 	return npmrcContent;
 }
 
-/** Make sure URL has a scheme */
-function ensureScheme(url: string): string {
-	return /^[a-z]+:\/\//.test(url) ? url : `https://${url}`;
-}
-
-/** Extract host name from URL */
-export function extractHostFromUrl(url: string): string {
-	return url.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+/** Remove scheme, ensure it starts with // and ends with /. */
+export function removeScheme(url: string): string {
+	return url.replace(/^[a-z]+:\/\//, "//").replace(/\/*$/, "/");
 }

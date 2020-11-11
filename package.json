@@ -17,9 +17,6 @@
   },
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.7.1",
-    "@graphql-codegen/cli": "^1.19.1",
-    "@graphql-codegen/typescript": "^1.17.11",
-    "@graphql-codegen/typescript-operations": "^1.17.9",
     "@types/fs-extra": "^9.0.3",
     "@types/mocha": "^8.0.3",
     "@types/power-assert": "^1.5.3",
@@ -60,7 +57,7 @@
     "compile:ts": "tsc --project .",
     "doc": "typedoc --mode modules --excludeExternals --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
     "git:info": "atm-git-info",
-    "gql:gen": "graphql-codegen",
+    "gql:gen": "atm-skill gql-generate",
     "lint": "run-p lint:eslint lint:prettier",
     "lint:eslint": "eslint --ext .ts .",
     "lint:prettier": "prettier --list-different \"**/*.{graphql,json,markdown,md,yaml,yml}\"",

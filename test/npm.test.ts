@@ -15,21 +15,27 @@
  */
 
 import * as assert from "power-assert";
-import { extractHostFromUrl } from "../lib/npm";
+import { removeScheme } from "../lib/npm";
 
 describe("npm", () => {
-	describe("extractHostFromUrl", () => {
-		it("finds the host", () => {
+	describe("removeScheme", () => {
+		it("removes the scheme", () => {
 			const uhs = [
-				{ u: "https://npm.foo.bar/", h: "npm.foo.bar" },
-				{ u: "https://npm.foo.bar//", h: "npm.foo.bar" },
-				{ u: "https://npm.foo.bar/baz", h: "npm.foo.bar" },
-				{ u: "https://npm.foo.bar/baz/", h: "npm.foo.bar" },
-				{ u: "https://npm.foo.bar/baz/qux", h: "npm.foo.bar" },
-				{ u: "https://npm.foo.bar/baz/qux/", h: "npm.foo.bar" },
-				{ u: "http://npm.foo.bar/", h: "npm.foo.bar" },
+				{ u: "https://npm.foo.bar/", h: "//npm.foo.bar/" },
+				{ u: "https://npm.foo.bar//", h: "//npm.foo.bar/" },
+				{ u: "https://npm.foo.bar/baz", h: "//npm.foo.bar/baz/" },
+				{ u: "https://npm.foo.bar/baz/", h: "//npm.foo.bar/baz/" },
+				{
+					u: "https://npm.foo.bar/baz/qux",
+					h: "//npm.foo.bar/baz/qux/",
+				},
+				{
+					u: "https://npm.foo.bar/baz/qux/",
+					h: "//npm.foo.bar/baz/qux/",
+				},
+				{ u: "http://npm.foo.bar/", h: "//npm.foo.bar/" },
 			];
-			uhs.forEach(uh => assert(extractHostFromUrl(uh.u) === uh.h));
+			uhs.forEach(uh => assert(removeScheme(uh.u) === uh.h));
 		});
 	});
 });
