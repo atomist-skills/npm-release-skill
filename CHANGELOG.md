@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/npm-release-skill/compare/0.2.2...HEAD)
 
+### Changed
+
+-   Update skill icon. [f33f723](https://github.com/atomist-skills/npm-release-skill/commit/f33f723b339f55fbeb23a60d2f9f7d62727e6067)
+
 ### Removed
 
 -   Remove GitHubNpmRegistryProvider. [5b5dfd3](https://github.com/atomist-skills/npm-release-skill/commit/5b5dfd379084235adf1ad52ffeb5470819c49577)
