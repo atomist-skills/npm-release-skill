@@ -22,6 +22,7 @@ import {
 	subscription,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
+
 import { NpmReleaseConfiguration } from "../configuration";
 import { prepareNpmRegistryProvider } from "../npm";
 import {
