@@ -15,6 +15,7 @@
  */
 
 import { EventContext } from "@atomist/skill";
+
 import {
 	NpmRegistryProviderQuery,
 	NpmRegistryProviderQueryVariables,
