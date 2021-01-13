@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/npm-release-skill/compare/1.0.0...HEAD)
 
+### Changed
+
+-   Make prerelease version check less stringent. [#80](https://github.com/atomist-skills/npm-release-skill/issues/80)
+
 ## [1.0.0](https://github.com/atomist-skills/npm-release-skill/compare/0.2.2...1.0.0) - 2020-11-18
 
 ### Changed
