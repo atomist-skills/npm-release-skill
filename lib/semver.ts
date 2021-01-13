@@ -14,19 +14,41 @@
  * limitations under the License.
  */
 
+import * as semver from "semver";
+
 /**
  * Return true if provided tag is a release semantic version.
  */
 export function isReleaseSemVer(tag: string): boolean {
-	const releaseSemVerRegExp = /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/;
-	return releaseSemVerRegExp.test(tag);
+	if (!tag) {
+		return false;
+	}
+	const sv = semver.parse(tag);
+	if (!sv || sv.prerelease?.length > 0 || sv.build?.length > 0) {
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Return true if provided tag is a prerelease semantic version.
+ */
+export function isPreReleaseSemVer(tag: string): boolean {
+	if (!tag) {
+		return false;
+	}
+	const sv = semver.parse(tag);
+	if (!sv || sv.build?.length > 0) {
+		return false;
+	}
+	return sv.prerelease?.length > 0;
 }
 
 /**
  * Clean up the tag, returning just the semantic version.
  */
 export function cleanSemVer(tag: string): string {
-	return tag.replace(/^v/, "");
+	return semver.clean(tag);
 }
 
 /**
@@ -34,9 +56,7 @@ export function cleanSemVer(tag: string): string {
  * pre-release semantic version matching the provided release semantic
  * version.
  */
-function isMatchingPreReleaseSemanticVersion(
-	release: string,
-): (t: string) => boolean {
+function isMatchingPreReleaseSemVer(release: string): (t: string) => boolean {
 	const releaseRegExp = new RegExp(`^v?${release}-`);
 	return (t: string): boolean => {
 		return releaseRegExp.test(t);
@@ -47,9 +67,24 @@ function isMatchingPreReleaseSemanticVersion(
  * Return subset of tags that are pre-release semantic versions
  * matching the provided release semantic version.
  */
-export function matchingPreReleaseSemanticVersions(
+export function matchingPreReleaseSemVers(
 	release: string,
 	tags: string[],
 ): string[] {
-	return tags.filter(isMatchingPreReleaseSemanticVersion(release));
+	return tags.filter(isMatchingPreReleaseSemVer(release));
+}
+
+/**
+ * Return latest tag that is a prerelease version less than the
+ * release. Return `undefined` if no suitable tag is found.
+ */
+export function bestPreReleaseSemVer(
+	release: string,
+	tags: string[],
+): string | undefined {
+	return tags
+		.filter(isPreReleaseSemVer)
+		.filter(t => semver.lt(t, release))
+		.sort(semver.compare)
+		.pop();
 }

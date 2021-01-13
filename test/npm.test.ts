@@ -14,11 +14,33 @@
  * limitations under the License.
  */
 
+import { log } from "@atomist/skill";
 import * as assert from "power-assert";
 
-import { removeScheme } from "../lib/npm";
+import { npmPackageVersions, removeScheme } from "../lib/npm";
 
 describe("npm", () => {
+	describe("npmPackageVersions", () => {
+		let originalLogDebug: any;
+		before(() => {
+			originalLogDebug = Object.getOwnPropertyDescriptor(log, "debug");
+			Object.defineProperty(log, "debug", {
+				value: () => {
+					return;
+				},
+			});
+		});
+		after(() => {
+			Object.defineProperty(log, "debug", originalLogDebug);
+		});
+
+		it("gets versions for this package", async () => {
+			const v = await npmPackageVersions("@atomist/npm-release-skill");
+			const e = ["0.1.1-110"];
+			assert.deepStrictEqual(v, e);
+		});
+	});
+
 	describe("removeScheme", () => {
 		it("removes the scheme", () => {
 			const uhs = [

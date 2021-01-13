@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventContext } from "@atomist/skill";
+import { childProcess, EventContext, log } from "@atomist/skill";
 
 import {
 	NpmRegistryProviderQuery,
@@ -74,4 +74,21 @@ export async function prepareNpmRegistryProvider(
 /** Remove scheme, ensure it starts with // and ends with /. */
 export function removeScheme(url: string): string {
 	return url.replace(/^[a-z]+:\/\//, "//").replace(/\/*$/, "/");
+}
+
+/** Get available versions of a package. */
+export async function npmPackageVersions(pkg: string): Promise<string[]> {
+	try {
+		const viewResult = await childProcess.execPromise("npm", [
+			"view",
+			pkg,
+			"versions",
+			"--json",
+		]);
+		const versions: string[] = JSON.parse(viewResult.stdout);
+		return versions;
+	} catch (e) {
+		log.warn(`Failed to get versions of ${pkg}: ${e.message}`);
+		return [];
+	}
 }

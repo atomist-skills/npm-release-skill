@@ -24,12 +24,8 @@ import {
 import * as fs from "fs-extra";
 
 import { NpmReleaseConfiguration } from "../configuration";
-import { prepareNpmRegistryProvider } from "../npm";
-import {
-	cleanSemVer,
-	isReleaseSemVer,
-	matchingPreReleaseSemanticVersions,
-} from "../semver";
+import { npmPackageVersions, prepareNpmRegistryProvider } from "../npm";
+import { bestPreReleaseSemVer, cleanSemVer, isReleaseSemVer } from "../semver";
 
 export const handler: EventHandler<
 	subscription.types.OnTagSubscription,
@@ -96,18 +92,8 @@ export const handler: EventHandler<
 		await ctx.audit.log(reason);
 		return status.failure(reason);
 	}
-	const preReleaseTags = matchingPreReleaseSemanticVersions(
-		releaseVersion,
-		commitTags,
-	);
-	if (preReleaseTags.length < 1) {
-		const reason = `Failed to find prerelease tag matching ${tagName}: ${commitTags.join(
-			" ",
-		)}`;
-		await ctx.audit.log(reason);
-		return status.failure(reason);
-	}
-	const preReleaseVersion = cleanSemVer(preReleaseTags[0]);
+	const preReleaseTag = bestPreReleaseSemVer(releaseVersion, commitTags);
+	const preReleaseVersion = cleanSemVer(preReleaseTag);
 
 	const pkgJsonPath = project.path("package.json");
 	let pkgName: string;
@@ -118,6 +104,13 @@ export const handler: EventHandler<
 		const reason = `Failed to read package.json: ${e.message}`;
 		await ctx.audit.log(reason);
 		return status.failure(reason);
+	}
+
+	const pkgVersions = await npmPackageVersions(pkgName);
+	if (pkgVersions.includes(releaseVersion)) {
+		const reason = `Package ${pkgName}@${releaseVersion} already exists`;
+		await ctx.audit.log(reason);
+		return status.success(reason);
 	}
 
 	try {
