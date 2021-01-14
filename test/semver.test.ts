@@ -18,10 +18,8 @@ import * as assert from "power-assert";
 
 import {
 	bestPreReleaseSemVer,
-	cleanSemVer,
 	isPreReleaseSemVer,
 	isReleaseSemVer,
-	matchingPreReleaseSemVers,
 } from "../lib/semver";
 
 describe("semver", () => {
@@ -89,43 +87,6 @@ describe("semver", () => {
 				"v12312.456456456.7897897-123423-12342344+m.1",
 			];
 			vs.forEach(v => assert(!isPreReleaseSemVer(v)));
-		});
-	});
-
-	describe("cleanSemVer", () => {
-		it("cleans semantic version", () => {
-			const vs = [
-				{ t: "1.2.3", v: "1.2.3" },
-				{ t: "v1.2.4", v: "1.2.4" },
-				{ t: "v0.0.0-a000", v: "0.0.0-a000" },
-				{ t: "v12312.456456456.7897897", v: "12312.456456456.7897897" },
-			];
-			vs.forEach(v => assert(cleanSemVer(v.t) === v.v));
-		});
-	});
-
-	describe("matchingPreReleaseSemanticVersions", () => {
-		it("finds matching pre-release semantic versions", () => {
-			const vs = [
-				{ r: "1.2.3", t: ["no", "1.2.2-x", "1.2.3-y"], e: ["1.2.3-y"] },
-				{ r: "1.2.4", t: ["v1.2.4", "no"], e: [] },
-				{
-					r: "3.2.1",
-					t: ["v3.2.1.0-z", "v3.2.1-0-abcdef", "v3.2.1"],
-					e: ["v3.2.1-0-abcdef"],
-				},
-				{
-					r: "7.4.1",
-					t: ["v7.4.1-0", "v7.4.1-1", "7.4.1-2", "v7.4.1"],
-					e: ["v7.4.1-0", "v7.4.1-1", "7.4.1-2"],
-				},
-			];
-			vs.forEach(v =>
-				assert.deepStrictEqual(
-					matchingPreReleaseSemVers(v.r, v.t),
-					v.e,
-				),
-			);
 		});
 	});
 

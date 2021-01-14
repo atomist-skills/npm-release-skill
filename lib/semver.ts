@@ -45,36 +45,6 @@ export function isPreReleaseSemVer(tag: string): boolean {
 }
 
 /**
- * Clean up the tag, returning just the semantic version.
- */
-export function cleanSemVer(tag: string): string {
-	return semver.clean(tag);
-}
-
-/**
- * Return a function that tags a tag and returns true if tag is a
- * pre-release semantic version matching the provided release semantic
- * version.
- */
-function isMatchingPreReleaseSemVer(release: string): (t: string) => boolean {
-	const releaseRegExp = new RegExp(`^v?${release}-`);
-	return (t: string): boolean => {
-		return releaseRegExp.test(t);
-	};
-}
-
-/**
- * Return subset of tags that are pre-release semantic versions
- * matching the provided release semantic version.
- */
-export function matchingPreReleaseSemVers(
-	release: string,
-	tags: string[],
-): string[] {
-	return tags.filter(isMatchingPreReleaseSemVer(release));
-}
-
-/**
  * Return latest tag that is a prerelease version less than the
  * release. Return `undefined` if no suitable tag is found.
  */

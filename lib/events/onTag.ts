@@ -22,10 +22,11 @@ import {
 	subscription,
 } from "@atomist/skill";
 import * as fs from "fs-extra";
+import * as semver from "semver";
 
 import { NpmReleaseConfiguration } from "../configuration";
 import { npmPackageVersions, prepareNpmRegistryProvider } from "../npm";
-import { bestPreReleaseSemVer, cleanSemVer, isReleaseSemVer } from "../semver";
+import { bestPreReleaseSemVer, isReleaseSemVer } from "../semver";
 
 export const handler: EventHandler<
 	subscription.types.OnTagSubscription,
@@ -38,7 +39,7 @@ export const handler: EventHandler<
 			.success(`Not a semantic version tag: ${tag.name}`)
 			.hidden();
 	}
-	const releaseVersion = cleanSemVer(tagName);
+	const releaseVersion = semver.clean(tagName);
 
 	const repo = tag.commit.repo;
 	await ctx.audit.log(`Starting npm Release on ${repo.owner}/${repo.name}`);
@@ -93,7 +94,7 @@ export const handler: EventHandler<
 		return status.failure(reason);
 	}
 	const preReleaseTag = bestPreReleaseSemVer(releaseVersion, commitTags);
-	const preReleaseVersion = cleanSemVer(preReleaseTag);
+	const preReleaseVersion = semver.clean(preReleaseTag);
 
 	const pkgJsonPath = project.path("package.json");
 	let pkgName: string;
