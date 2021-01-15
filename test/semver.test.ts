@@ -25,7 +25,7 @@ import {
 describe("semver", () => {
 	describe("isReleaseSemVer", () => {
 		it("matches release semantic versions", () => {
-			const vs = ["1.2.3", "v1.2.4", "0.0.0", "v12312.456456456.7897897"];
+			const vs = ["1.2.3", "v1.2.4", "0.0.0", "v1231.456456456.7897897"];
 			vs.forEach(v => assert(isReleaseSemVer(v)));
 		});
 
