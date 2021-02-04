@@ -38,7 +38,7 @@ describe("npm", () => {
 			const v = await npmPackageVersions("@atomist/npm-release-skill");
 			const e = ["0.1.1-110"];
 			assert.deepStrictEqual(v, e);
-		});
+		}).timeout(5000);
 	});
 
 	describe("removeScheme", () => {
