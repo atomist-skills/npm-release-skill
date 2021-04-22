@@ -16,6 +16,7 @@
 
 import {
 	EventHandler,
+	log,
 	repository,
 	secret,
 	status,
@@ -42,7 +43,7 @@ export const handler: EventHandler<
 	const releaseVersion = semver.clean(tagName);
 
 	const repo = tag.commit.repo;
-	await ctx.audit.log(`Starting npm Release on ${repo.owner}/${repo.name}`);
+	log.info(`Starting npm Release on ${repo.owner}/${repo.name}`);
 
 	const credential = await ctx.credential.resolve(
 		secret.gitHubAppToken({
@@ -56,7 +57,7 @@ export const handler: EventHandler<
 		npmrcCreds = await prepareNpmRegistryProvider(ctx);
 	} catch (e) {
 		const reason = `Failed to generate .npmrc content for NPM registries: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
 
@@ -69,9 +70,7 @@ export const handler: EventHandler<
 		}),
 		{ alwaysDeep: false },
 	);
-	await ctx.audit.log(
-		`Cloned repository ${repo.owner}/${repo.name}#${tagName}`,
-	);
+	log.info(`Cloned repository ${repo.owner}/${repo.name}#${tagName}`);
 
 	let commitTags: string[];
 	try {
@@ -83,14 +82,14 @@ export const handler: EventHandler<
 		commitTags = listTagsResult.stdout.trim().split("\n");
 	} catch (e) {
 		const reason = `Failed to list tags for commit ${tag.commit.sha}: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
 	if (!commitTags.includes(tagName)) {
 		const reason = `Tag ${tagName} not associated with commit ${
 			tag.commit.sha
 		}: ${commitTags.join(" ")}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
 	const preReleaseTag = bestPreReleaseSemVer(releaseVersion, commitTags);
@@ -103,14 +102,14 @@ export const handler: EventHandler<
 		pkgName = pkgJson.name;
 	} catch (e) {
 		const reason = `Failed to read package.json: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
 
 	const pkgVersions = await npmPackageVersions(pkgName);
 	if (pkgVersions.includes(releaseVersion)) {
 		const reason = `Package ${pkgName}@${releaseVersion} already exists`;
-		await ctx.audit.log(reason);
+		log.info(reason);
 		return status.success(reason);
 	}
 
@@ -118,10 +117,10 @@ export const handler: EventHandler<
 		await project.exec("npm", ["pack", `${pkgName}@${preReleaseVersion}`]);
 	} catch (e) {
 		const reason = `Failed to download ${pkgName}@${preReleaseVersion}: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
-	await ctx.audit.log(`Downloaded ${pkgName}@${preReleaseVersion}`);
+	log.info(`Downloaded ${pkgName}@${preReleaseVersion}`);
 
 	const pkgTgz = `${pkgName}-${preReleaseVersion}.tgz`
 		.replace(/^@/, "")
@@ -130,7 +129,7 @@ export const handler: EventHandler<
 		await project.exec("tar", ["-x", "-z", "-f", pkgTgz]);
 	} catch (e) {
 		const reason = `Failed to unpack ${pkgTgz}: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
 
@@ -142,17 +141,17 @@ export const handler: EventHandler<
 		);
 	} catch (e) {
 		const reason = `Failed to undate version of package to ${pkgName}@${releaseVersion}: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
-	await ctx.audit.log(`Set version to ${pkgName}@${releaseVersion}`);
+	log.info(`Set version to ${pkgName}@${releaseVersion}`);
 
 	const npmrcPath = project.path("package", ".npmrc");
 	try {
 		await fs.writeFile(npmrcPath, `ignore-scripts=true\n${npmrcCreds}`);
 	} catch (e) {
 		const reason = `Failed to write ${npmrcPath}: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
 
@@ -167,12 +166,10 @@ export const handler: EventHandler<
 		);
 	} catch (e) {
 		const reason = `Failed to publish release version of package ${pkgName}@${releaseVersion}: ${e.message}`;
-		await ctx.audit.log(reason);
+		log.error(reason);
 		return status.failure(reason);
 	}
-	await ctx.audit.log(
-		`Published ${pkgName}@${preReleaseVersion} as ${releaseVersion}`,
-	);
+	log.info(`Published ${pkgName}@${preReleaseVersion} as ${releaseVersion}`);
 
 	return status.success(`Released ${pkgName} version ${releaseVersion}`);
 };
